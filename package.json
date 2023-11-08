@@ -1,0 +1,39 @@
+{
+  "name": "ScreenWave",
+  "productName": "ScreenWave",
+  "version": "1.0.0",
+  "description": "Open source screen recorder",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [
+    "screen recorder"
+  ],
+  "author": "A R Arif <ararif724@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.4.2",
+    "@electron-forge/maker-deb": "^6.4.2",
+    "@electron-forge/maker-rpm": "^6.4.2",
+    "@electron-forge/maker-squirrel": "^6.4.2",
+    "@electron-forge/maker-zip": "^6.4.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^6.4.2",
+    "electron": "27.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ararif724/ScreenWave.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ararif724/ScreenWave/issues"
+  },
+  "homepage": "https://github.com/ararif724/ScreenWave#readme"
+}

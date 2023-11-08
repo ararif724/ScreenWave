@@ -1,0 +1,124 @@
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+::selection {
+    background: transparent;
+}
+
+/**
+* Main Window
+*********************/
+.main-window {
+    background-image: linear-gradient(90deg, rgb(171 174 181 / 90%) 0%, rgb(162 165 172 / 90%) 100%);
+    border-radius: 40px;
+    width: 100%;
+    height: 100vh;
+    -webkit-app-region: drag;
+    overflow: hidden;
+    position: relative;
+}
+
+.main-window * {
+    -webkit-app-region: no-drag;
+}
+
+.main-window .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 25px 25px 0 0;
+    height: 25px;
+    fill: #dddddd;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.main-window .close:hover {
+    fill: #fff;
+}
+
+.btn {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    margin: 20px;
+    text-align: center;
+    border: none;
+    background-size: 300% 100%;
+    border-radius: 50px;
+    transition: all .4s ease-in-out;
+    padding: 15px;
+    background-image: linear-gradient(to right,
+            #ed6ea0,
+            #ec8c69,
+            #f7186a,
+            #fbb03b);
+    box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
+}
+
+.btn:hover {
+    background-position: 100% 0;
+}
+
+.btn:focus {
+    outline: none;
+}
+
+.btn-exit-app {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.cam-select {
+    position: relative;
+}
+
+.cam-list {
+    display: none;
+    position: absolute;
+    list-style: none;
+    color: #333333;
+    box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
+    padding: 0;
+    right: 0;
+    left: 0;
+    top: 100%;
+    border-radius: 10px;
+    margin: 0 20px;
+    overflow: hidden;
+}
+
+.cam-list li {
+    padding: 15px;
+    border-bottom: 1px dashed black;
+    cursor: pointer;
+    background: white;
+    transition: all .2s;
+}
+
+.cam-list li:last-child {
+    border: none
+}
+
+.cam-list li:hover {
+    background: #ffe6e6;
+}
+
+#camVideo {
+    width: calc(100% - 40px);
+    height: calc(100vh - 40px);
+    margin: 20px;
+    overflow: hidden;
+    object-fit: cover;
+    border-radius: 100%;
+    box-shadow: 0 0 15px 1px black;
+    -webkit-app-region: drag;
+}
