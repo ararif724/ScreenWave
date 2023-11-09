@@ -4,7 +4,7 @@ const mainWindowController = require('./controller/mainWindowController');
 const camWindowController = require('./controller/camWindowController');
 
 //setting variables
-global.app = {
+global.cnf = {
     controllerPath: path.join(__dirname, '/controller'),
     preloadScriptPath: path.join(__dirname, '/preloadScript'),
     webContentPath: path.join(__dirname, '/webContent'),

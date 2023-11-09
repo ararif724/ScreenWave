@@ -10,13 +10,13 @@ module.exports = function () {
             fullscreenable: false,
             resizable: false,
             webPreferences: {
-                preload: app.preloadScriptPath + '/mainWindowPreload.js'
+                preload: cnf.preloadScriptPath + '/mainWindowPreload.js'
             }
         });
 
         window.webContents.openDevTools();
 
-        window.loadFile(app.webContentPath + '/html/mainWindow.html');
-        app.mainWindow = window;
+        window.loadFile(cnf.webContentPath + '/html/mainWindow.html');
+        cnf.mainWindow = window;
     });
 }

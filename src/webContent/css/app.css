@@ -7,6 +7,10 @@ body {
     background: transparent;
 }
 
+img {
+    max-width: 100%;
+}
+
 /**
 * Main Window
 *********************/
@@ -18,6 +22,8 @@ body {
     -webkit-app-region: drag;
     overflow: hidden;
     position: relative;
+    padding: 30px;
+    box-sizing: border-box;
 }
 
 .main-window * {
@@ -37,6 +43,42 @@ body {
 
 .main-window .close:hover {
     fill: #fff;
+}
+
+.app-branding {
+    font-size: 30px;
+    font-weight: bolder;
+    text-align: center;
+    margin: 30px 0 50px 0;
+    color: white;
+    -webkit-app-region: drag;
+}
+
+.recording-mode-selector-container {
+    display: flex;
+}
+
+.recording-mode-select {
+    flex: 1;
+    margin: 10px 15px;
+    text-align: center;
+    color: rgb(255 255 255 / 95%);
+    font-size: 20px;
+}
+
+.recording-mode-select.active {
+    filter: drop-shadow(0px 15px 30px black);
+    transform: scale(1.12);
+}
+
+.recording-mode-select:not(.active) {
+    filter: contrast(0.7);
+    transform: scale(0.9);
+}
+
+.recording-mode-select img {
+    border-radius: 15px;
+    margin: 0 0 10px 0;
 }
 
 .btn {
