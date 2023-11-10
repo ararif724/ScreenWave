@@ -11,6 +11,10 @@ img {
     max-width: 100%;
 }
 
+.d-flex {
+    display: flex;
+}
+
 /**
 * Main Window
 *********************/
@@ -30,7 +34,7 @@ img {
     -webkit-app-region: no-drag;
 }
 
-.main-window .close {
+.main-window .close-app {
     position: absolute;
     top: 0;
     right: 0;
@@ -41,7 +45,7 @@ img {
     transition: all .2s;
 }
 
-.main-window .close:hover {
+.main-window .close-app:hover {
     fill: #fff;
 }
 
@@ -64,6 +68,8 @@ img {
     text-align: center;
     color: rgb(255 255 255 / 95%);
     font-size: 20px;
+    cursor: pointer;
+    transition: all .5s;
 }
 
 .recording-mode-select.active {
@@ -76,11 +82,24 @@ img {
     transform: scale(0.9);
 }
 
+.recording-mode-select:not(.active):hover {
+    filter: contrast(1);
+    transform: scale(1);
+}
+
 .recording-mode-select img {
     border-radius: 15px;
     margin: 0 0 10px 0;
 }
 
+
+
+
+
+
+/***********
+* DELETE
+*******************/
 .btn {
     white-space: nowrap;
     text-overflow: ellipsis;

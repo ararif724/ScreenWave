@@ -1,11 +1,8 @@
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, contextBridge } = require('electron')
 
-window.addEventListener('load', function () {
-    document.querySelector(".close").addEventListener('click', function () {
-        ipcRenderer.send('app:close');
-    });
-
-    document.querySelector(".btn-cam-select").addEventListener('click', showCamList);
+contextBridge.exposeInMainWorld('app', {
+    close: () => ipcRenderer.send('app:close'),
+    setRecordingMode: (recordingMode) => ipcRenderer.send('app:setRecordingMode', recordingMode)
 });
 
 async function showCamList() {
@@ -18,9 +15,9 @@ async function showCamList() {
             selectCam({
                 "deviceId": "",
                 "label": "No Camera"
-            })
+            });
         }
-        camListEL.append(li)
+        camListEL.append(li);
         const mediaDevices = await navigator.mediaDevices.enumerateDevices()
         for (const mediaDevice of mediaDevices) {
             if (mediaDevice.kind == 'videoinput') {
