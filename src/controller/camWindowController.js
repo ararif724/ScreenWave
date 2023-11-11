@@ -1,37 +1,52 @@
 const { BrowserWindow, ipcMain } = require('electron')
 
 module.exports = function () {
-    ipcMain.on('openCamWindow', (event, deviceId) => {
-        if (typeof (app.camWindow) == 'undefined') {
+    ipcMain.on('camWindow:open', () => {
+        if (typeof (cnf.camWindow) != 'undefined') {
+            cnf.camWindow.close();
+            delete cnf.camWindow;
+        }
 
-            const { screen } = require('electron');
-            const camWindowHeight = 300;
+        if (cnf.recordingMode != 'screen') {
+
+            let config = {
+                width: 700,
+                height: 600,
+            };
+
+            if (cnf.recordingMode == 'screenCamera') {
+                const { screen } = require('electron');
+                const camWindowHeight = 300;
+                config = {
+                    width: 300,
+                    height: camWindowHeight,
+                    x: 0,
+                    y: screen.getPrimaryDisplay().bounds.height - camWindowHeight,
+                };
+            }
 
             const window = new BrowserWindow({
-                parent: app.mainWindow,
-                width: 300,
-                height: camWindowHeight,
-                x: 0,
-                y: screen.getPrimaryDisplay().bounds.height - camWindowHeight,
+                ...config,
                 frame: false,
                 transparent: true,
                 alwaysOnTop: true,
                 webPreferences: {
-                    preload: app.preloadScriptPath + '/camWindowPreload.js'
+                    preload: cnf.preloadScriptPath + '/camWindowPreload.js'
                 }
             });
 
-            window.loadFile(app.webContentPath + '/html/camWindow.html');
-            window.webContents.openDevTools();
-            app.camWindow = window;
-        }
-        app.camWindow.webContents.send("loadCam", deviceId);
-    });
+            window.loadFile(cnf.webContentPath + '/html/camWindow.html');
 
-    ipcMain.on('closeCamWindow', () => {
-        if (typeof (app.camWindow) != 'undefined') {
-            app.camWindow.close();
-            delete app.camWindow;
+            window.webContents.send('config', {
+                recordingMode: cnf.recordingMode,
+                videoInDeviceId: cnf.videoInDeviceId,
+                audioInDeviceId: cnf.audioInDeviceId,
+            });
+
+            window.webContents.openDevTools();
+
+            cnf.camWindow = window;
         }
+
     });
 };

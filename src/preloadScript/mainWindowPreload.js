@@ -1,46 +1,11 @@
 const { ipcRenderer, contextBridge } = require('electron')
 
 contextBridge.exposeInMainWorld('app', {
-    close: () => ipcRenderer.send('app:close'),
-    setRecordingMode: (recordingMode) => ipcRenderer.send('app:setRecordingMode', recordingMode)
+    close: () => ipcRenderer.invoke('app:close'),
+    setRecordingMode: (recordingMode) => ipcRenderer.invoke('app:setRecordingMode', recordingMode),
+    setVideoInDeviceId: (videoInDeviceId) => ipcRenderer.invoke('app:setVideoInDeviceId', videoInDeviceId),
+    setAudioInDeviceId: (audioInDeviceId) => ipcRenderer.invoke('app:setAudioInDeviceId', audioInDeviceId),
+    getRecordingMode: () => ipcRenderer.invoke('app:getRecordingMode'),
+    getVideoInDeviceId: () => ipcRenderer.invoke('app:getVideoInDeviceId'),
+    getAudioInDeviceId: () => ipcRenderer.invoke('app:getAudioInDeviceId'),
 });
-
-async function showCamList() {
-    const camListEL = document.querySelector(".cam-list")
-    if (camListEL.style.display == "none" || camListEL.style.display == "") {
-        camListEL.innerHTML = ""
-        const li = document.createElement('li')
-        li.append("No Camera")
-        li.onclick = () => {
-            selectCam({
-                "deviceId": "",
-                "label": "No Camera"
-            });
-        }
-        camListEL.append(li);
-        const mediaDevices = await navigator.mediaDevices.enumerateDevices()
-        for (const mediaDevice of mediaDevices) {
-            if (mediaDevice.kind == 'videoinput') {
-                const li = document.createElement('li')
-                li.append(mediaDevice.label)
-                li.onclick = () => {
-                    selectCam(mediaDevice)
-                }
-                camListEL.append(li)
-            }
-        }
-        camListEL.style.display = "block"
-    } else {
-        camListEL.style.display = "none"
-    }
-}
-
-function selectCam(device) {
-    if (device.deviceId != "") {
-        ipcRenderer.send('openCamWindow', device.deviceId)
-    } else {
-        ipcRenderer.send('closeCamWindow')
-    }
-    document.querySelector(".cam-list").style.display = "none"
-    document.querySelector(".btn-cam-select").innerHTML = device.label
-}

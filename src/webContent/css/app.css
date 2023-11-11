@@ -1,3 +1,5 @@
+@import url('./fontawesome.min.css');
+
 body {
     margin: 0;
     overflow: hidden;
@@ -39,14 +41,14 @@ img {
     top: 0;
     right: 0;
     margin: 25px 25px 0 0;
-    height: 25px;
-    fill: #dddddd;
+    font-size: 25px;
+    color: #dddddd;
     cursor: pointer;
     transition: all .2s;
 }
 
 .main-window .close-app:hover {
-    fill: #fff;
+    color: #fff;
 }
 
 .app-branding {
@@ -92,88 +94,38 @@ img {
     margin: 0 0 10px 0;
 }
 
+.select-box {
+    flex: 1;
+    background-color: rgb(166 169 176);
+    margin: 50px 15px;
+    border-radius: 10px;
+}
 
-
-
-
-
-/***********
-* DELETE
-*******************/
-.btn {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
-    cursor: pointer;
-    margin: 20px;
-    text-align: center;
+.select-box select {
+    width: 100%;
+    background: transparent;
     border: none;
-    background-size: 300% 100%;
-    border-radius: 50px;
-    transition: all .4s ease-in-out;
-    padding: 15px;
-    background-image: linear-gradient(to right,
-            #ed6ea0,
-            #ec8c69,
-            #f7186a,
-            #fbb03b);
-    box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
-}
-
-.btn:hover {
-    background-position: 100% 0;
-}
-
-.btn:focus {
+    color: rgb(255 255 255 / 95%);
+    font-size: 15px;
+    padding: 20px 0;
+    margin-right: 20px;
     outline: none;
 }
 
-.btn-exit-app {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+.select-box select option {
+    background-color: rgb(166 169 176);
 }
 
-.cam-select {
-    position: relative;
+.select-box .icon {
+    color: rgb(255 255 255 / 95%);
+    font-size: 20px;
+    padding: 20px;
 }
 
-.cam-list {
-    display: none;
-    position: absolute;
-    list-style: none;
-    color: #333333;
-    box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
-    padding: 0;
-    right: 0;
-    left: 0;
-    top: 100%;
-    border-radius: 10px;
-    margin: 0 20px;
-    overflow: hidden;
-}
-
-.cam-list li {
-    padding: 15px;
-    border-bottom: 1px dashed black;
-    cursor: pointer;
-    background: white;
-    transition: all .2s;
-}
-
-.cam-list li:last-child {
-    border: none
-}
-
-.cam-list li:hover {
-    background: #ffe6e6;
-}
-
-#camVideo {
+/*
+* Cam Window
+**************************/
+#cam-video {
     width: calc(100% - 40px);
     height: calc(100vh - 40px);
     margin: 20px;
@@ -182,4 +134,8 @@ img {
     border-radius: 100%;
     box-shadow: 0 0 15px 1px black;
     -webkit-app-region: drag;
+}
+
+#cam-video.full-size {
+    border-radius: 0;
 }

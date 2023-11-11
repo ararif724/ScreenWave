@@ -5,7 +5,7 @@ const camWindowController = require('./controller/camWindowController');
 
 //setting variables
 userCnf = {
-    recordingModes: 'screen'
+    recordingMode: 'screen'
 };
 
 global.cnf = {
@@ -13,6 +13,8 @@ global.cnf = {
     preloadScriptPath: path.join(__dirname, '/preloadScript'),
     webContentPath: path.join(__dirname, '/webContent'),
     recordingMode: 'screenCamera',
+    videoInDeviceId: null,
+    audioInDeviceId: null,
     ...userCnf
 };
 
@@ -21,16 +23,28 @@ mainWindowController();
 camWindowController();
 
 //root events
-ipcMain.on('app:close', () => {
+ipcMain.handle('app:close', () => {
     app.quit()
 });
 
-ipcMain.on('app:setRecordingMode', (e, recordingMode) => {
+ipcMain.handle('app:setRecordingMode', (e, recordingMode) => {
     cnf.recordingMode = recordingMode;
-    if (recordingMode !== "screen") {
-        ipcMain.emit('camWindow:open');
-    }
+    ipcMain.emit('camWindow:open');
 });
+
+ipcMain.handle('app:setVideoInDeviceId', (e, videoInDeviceId) => {
+    cnf.videoInDeviceId = videoInDeviceId;
+    ipcMain.emit('camWindow:open');
+});
+
+ipcMain.handle('app:setAudioInDeviceId', (e, audioInDeviceId) => {
+    cnf.audioInDeviceId = audioInDeviceId;
+    ipcMain.emit('camWindow:open');
+});
+
+ipcMain.handle('app:getRecordingMode', () => cnf.recordingMode);
+ipcMain.handle('app:getVideoInDeviceId', () => cnf.videoInDeviceId);
+ipcMain.handle('app:getAudioInDeviceId', () => cnf.audioInDeviceId);
 
 app.whenReady().then(() => {
     ipcMain.emit('mainWindow:open');

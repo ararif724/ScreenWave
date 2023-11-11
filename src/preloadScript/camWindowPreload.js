@@ -1,18 +1,5 @@
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, contextBridge } = require('electron')
 
-ipcRenderer.on('loadCam', (event, deviceId) => {
-    if (document.readyState == 'complete') {
-        loadCam(deviceId)
-    } else {
-        window.addEventListener('load', function () {
-            loadCam(deviceId)
-        })
-    }
-})
-
-async function loadCam(deviceId) {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId }, audio: false });
-    const camVideo = document.querySelector("#camVideo");
-    camVideo.srcObject = stream;
-    camVideo.play();
-}
+ipcRenderer.on('config', (event, config) => {
+    contextBridge.exposeInMainWorld('app', { config: config });
+});

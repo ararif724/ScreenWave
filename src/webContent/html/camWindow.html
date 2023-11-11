@@ -6,10 +6,12 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
     <link rel="stylesheet" href="../css/app.css">
+    <script src="../js/jquery-3.7.1.min.js"></script>
+    <script src="../js/renderer.js"></script>
 </head>
 
-<body>
-    <video id="camVideo"></video>
+<body data-window="camWindow">
+    <video id="cam-video" muted></video>
 </body>
 
 </html>

@@ -14,9 +14,16 @@ module.exports = function () {
             }
         });
 
+        window.loadFile(cnf.webContentPath + '/html/mainWindow.html');
+
+        window.webContents.send('config', {
+            recordingMode: cnf.recordingMode,
+            videoInDeviceId: cnf.videoInDeviceId,
+            audioInDeviceId: cnf.audioInDeviceId,
+        });
+
         window.webContents.openDevTools();
 
-        window.loadFile(cnf.webContentPath + '/html/mainWindow.html');
         cnf.mainWindow = window;
     });
 }
