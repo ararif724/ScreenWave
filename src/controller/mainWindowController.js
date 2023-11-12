@@ -16,12 +16,6 @@ module.exports = function () {
 
         window.loadFile(cnf.webContentPath + '/html/mainWindow.html');
 
-        window.webContents.send('config', {
-            recordingMode: cnf.recordingMode,
-            videoInDeviceId: cnf.videoInDeviceId,
-            audioInDeviceId: cnf.audioInDeviceId,
-        });
-
         cnf.mainWindow = window;
     });
 }

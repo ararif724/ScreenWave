@@ -1,8 +1,35 @@
 @import url('./fontawesome.min.css');
 
+@font-face {
+    font-family: "LobsterTwo";
+    src: url('../webfonts/LobsterTwo-Regular.ttf');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "LobsterTwo";
+    src: url('../webfonts/LobsterTwo-Italic.ttf');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "LobsterTwo";
+    src: url('../webfonts/LobsterTwo-Bold.ttf');
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "LobsterTwo";
+    src: url('../webfonts/LobsterTwo-BoldItalic.ttf');
+    font-weight: bold;
+    font-style: italic;
+}
+
 body {
     margin: 0;
     overflow: hidden;
+    font-family: 'LobsterTwo';
 }
 
 ::selection {
@@ -110,6 +137,7 @@ img {
     padding: 20px 0;
     margin-right: 20px;
     outline: none;
+    font-family: inherit;
 }
 
 .select-box select option {
@@ -120,6 +148,24 @@ img {
     color: rgb(255 255 255 / 95%);
     font-size: 20px;
     padding: 20px;
+}
+
+.start-record-btn {
+    margin: 0 auto;
+    width: 300px;
+    text-align: center;
+    background-color: rgb(255 255 255 / 80%);
+    color: #2f2f2f;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.start-record-btn:hover {
+    background-color: white;
 }
 
 /*
