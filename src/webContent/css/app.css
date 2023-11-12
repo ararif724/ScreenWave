@@ -131,11 +131,10 @@ img {
     margin: 20px;
     overflow: hidden;
     object-fit: cover;
-    border-radius: 100%;
     box-shadow: 0 0 15px 1px black;
     -webkit-app-region: drag;
 }
 
-#cam-video.full-size {
-    border-radius: 0;
+#cam-video.screen-camera-mode {
+    border-radius: 100%;
 }

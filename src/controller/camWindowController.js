@@ -43,7 +43,7 @@ module.exports = function () {
                 audioInDeviceId: cnf.audioInDeviceId,
             });
 
-            window.webContents.openDevTools();
+            //window.webContents.openDevTools();
 
             cnf.camWindow = window;
         }

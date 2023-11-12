@@ -54,10 +54,10 @@ function mainWindow() {
 }
 
 async function camWindow() {
-    if (app.config.recordingMode == "camera") {
-        $("#cam-video").addClass("full-size");
+    if (app.config.recordingMode == "screenCamera") {
+        $("#cam-video").addClass("screen-camera-mode");
     } else {
-        $("#cam-video").removeClass("full-size");
+        $("#cam-video").removeClass("screen-camera-mode");
     }
 
     let constraints = {

@@ -22,8 +22,6 @@ module.exports = function () {
             audioInDeviceId: cnf.audioInDeviceId,
         });
 
-        window.webContents.openDevTools();
-
         cnf.mainWindow = window;
     });
 }
