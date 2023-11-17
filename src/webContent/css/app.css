@@ -184,3 +184,10 @@ img {
 #cam-video.screen-camera-mode {
     border-radius: 100%;
 }
+
+/*
+* Panel Window
+**************************/
+.panel-window {
+    height: 100vh;
+}

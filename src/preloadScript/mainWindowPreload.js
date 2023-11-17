@@ -8,4 +8,5 @@ contextBridge.exposeInMainWorld('app', {
     getRecordingMode: () => ipcRenderer.invoke('app:getRecordingMode'),
     getVideoInDeviceId: () => ipcRenderer.invoke('app:getVideoInDeviceId'),
     getAudioInDeviceId: () => ipcRenderer.invoke('app:getAudioInDeviceId'),
+    startRecording: () => ipcRenderer.invoke('recording:start'),
 });

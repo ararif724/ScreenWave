@@ -2,6 +2,8 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const mainWindowController = require('./controller/mainWindowController');
 const camWindowController = require('./controller/camWindowController');
+const recordingController = require('./controller/recordingController');
+const panelWindowController = require('./controller/panelWindowController');
 
 //setting variables
 userCnf = {
@@ -21,6 +23,8 @@ global.cnf = {
 //loading controllers
 mainWindowController();
 camWindowController();
+panelWindowController();
+recordingController();
 
 //root events
 ipcMain.handle('app:close', () => {
@@ -48,6 +52,7 @@ ipcMain.handle('app:getAudioInDeviceId', () => cnf.audioInDeviceId);
 
 app.whenReady().then(() => {
     ipcMain.emit('mainWindow:open');
+    ipcMain.emit('panelWindow:open');
 });
 
 app.on('window-all-closed', () => {
