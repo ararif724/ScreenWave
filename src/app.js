@@ -4,6 +4,7 @@ const mainWindowController = require('./controller/mainWindowController');
 const camWindowController = require('./controller/camWindowController');
 const recordingController = require('./controller/recordingController');
 const panelWindowController = require('./controller/panelWindowController');
+const canvasWindowController = require('./controller/canvasWindowController');
 
 //setting variables
 userCnf = {
@@ -17,6 +18,7 @@ global.cnf = {
     recordingMode: 'screenCamera',
     videoInDeviceId: null,
     audioInDeviceId: null,
+    panelWindowPosition: { x: 0, y: 0 },
     ...userCnf
 };
 
@@ -24,6 +26,7 @@ global.cnf = {
 mainWindowController();
 camWindowController();
 panelWindowController();
+canvasWindowController();
 recordingController();
 
 //root events
@@ -51,8 +54,10 @@ ipcMain.handle('app:getVideoInDeviceId', () => cnf.videoInDeviceId);
 ipcMain.handle('app:getAudioInDeviceId', () => cnf.audioInDeviceId);
 
 app.whenReady().then(() => {
+    const { screen } = require('electron');
+    cnf.displaySize = screen.getPrimaryDisplay().bounds;
+
     ipcMain.emit('mainWindow:open');
-    ipcMain.emit('panelWindow:open');
 });
 
 app.on('window-all-closed', () => {

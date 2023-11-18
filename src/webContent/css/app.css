@@ -188,6 +188,61 @@ img {
 /*
 * Panel Window
 **************************/
-.panel-window {
+.panel-window .controls {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    padding-right: 5px;
+    border-radius: 10px;
+    display: flex;
+    font-size: 25px;
+    opacity: 0.3;
+    transition: all .2s;
+    border: 1px solid gray;
+}
+
+.panel-window .controls:hover {
+    opacity: 1;
+}
+
+.panel-window .controls .control {
+    cursor: pointer;
+    padding: 10px 7px;
+    margin: 0 3px;
+}
+
+.panel-window .controls .control:hover {
+    transform: scale(1.1);
+}
+
+.panel-window .controls .control#drag {
+    width: 15px;
+    padding: 10px 5px;
+    cursor: move;
+    -webkit-app-region: drag;
+}
+
+.panel-window .controls .control#drag i:first-child {
+    letter-spacing: -3px;
+}
+
+
+/*
+* Canvas Window
+**************************/
+.canvas-window {
     height: 100vh;
+}
+
+.canvas-window .how-to-exit-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    transform: translate(-50%, -50%);
+    background: rgb(255 255 255 / 80%);
+    padding: 30px;
+    font-family: sans-serif;
 }

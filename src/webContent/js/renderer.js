@@ -82,25 +82,43 @@ async function camWindow() {
 }
 
 function panelWindow() {
-    const paintCanvas = document.querySelector('#panel-window-canvas');
 
+    $("#pen").click(() => {
+        app.enterDrawMode();
+    });
+
+}
+
+function canvasWindow() {
+
+    $(".canvas-window .how-to-exit-message").fadeOut(2000);
+
+    const paintCanvas = document.querySelector('#canvas-window-canvas');
     paintCanvas.width = document.body.clientWidth;
     paintCanvas.height = document.body.clientHeight;
 
     const context = paintCanvas.getContext('2d');
+
+    window.addEventListener('keyup', function (e) {
+        if (e.key == "Escape") {
+            context.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
+            app.exitDrawMode();
+        }
+    });
+
     context.lineCap = 'round';
     context.strokeStyle = "red";
     context.lineWidth = 5;
 
     /* const colorPicker = document.querySelector('.js-color-picker');
-
+ 
     colorPicker.addEventListener('change', event => {
         context.strokeStyle = event.target.value;
     });
-
+ 
     const lineWidthRange = document.querySelector('.js-line-range');
     const lineWidthLabel = document.querySelector('.js-range-value');
-
+ 
     lineWidthRange.addEventListener('input', event => {
         const width = event.target.value;
         lineWidthLabel.innerHTML = width;
@@ -133,4 +151,5 @@ function panelWindow() {
     paintCanvas.addEventListener('mousemove', drawLine);
     paintCanvas.addEventListener('mouseup', stopDrawing);
     paintCanvas.addEventListener('mouseout', stopDrawing);
+
 }
