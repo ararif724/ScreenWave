@@ -1,5 +1,8 @@
 const { ipcRenderer, contextBridge } = require('electron')
 
-contextBridge.exposeInMainWorld('app', {
-    enterDrawMode: () => ipcRenderer.invoke('canvasWindow:enterDrawMode')
+ipcRenderer.on('config', (event, config) => {
+    contextBridge.exposeInMainWorld('app', {
+        config: config,
+        enterDrawMode: () => ipcRenderer.invoke('canvasWindow:enterDrawMode')
+    });
 });

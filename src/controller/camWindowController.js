@@ -15,13 +15,13 @@ module.exports = function () {
             };
 
             if (cnf.recordingMode == 'screenCamera') {
-                const { screen } = require('electron');
                 const camWindowHeight = 300;
                 config = {
                     width: 300,
                     height: camWindowHeight,
                     x: 0,
-                    y: screen.getPrimaryDisplay().bounds.height - camWindowHeight,
+                    y: cnf.displaySize.height - camWindowHeight,
+                    alwaysOnTop: true
                 };
             }
 
@@ -29,7 +29,7 @@ module.exports = function () {
                 ...config,
                 frame: false,
                 transparent: true,
-                alwaysOnTop: true,
+                resizable: false,
                 webPreferences: {
                     preload: cnf.preloadScriptPath + '/camWindowPreload.js'
                 }

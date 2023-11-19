@@ -18,7 +18,7 @@ global.cnf = {
     recordingMode: 'screenCamera',
     videoInDeviceId: null,
     audioInDeviceId: null,
-    panelWindowPosition: { x: 0, y: 0 },
+    panelWindowPosition: { x: null, y: null },
     ...userCnf
 };
 

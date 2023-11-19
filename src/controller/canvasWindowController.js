@@ -4,6 +4,8 @@ module.exports = function () {
 
     ipcMain.handle('canvasWindow:enterDrawMode', function () {
 
+        cnf.panelWindow.hide();
+
         if (typeof (cnf.canvasWindow) != 'undefined') {
             cnf.canvasWindow.show();
             return true;
@@ -11,7 +13,6 @@ module.exports = function () {
 
         const window = new BrowserWindow({
             frame: false,
-            parent: cnf.mainWindow,
             ...cnf.displaySize,
             transparent: true,
             fullscreenable: false,
@@ -29,6 +30,7 @@ module.exports = function () {
 
     ipcMain.handle('canvasWindow:exitDrawMode', function () {
         cnf.canvasWindow.hide();
+        cnf.panelWindow.show();
     });
 
 }

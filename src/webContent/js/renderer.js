@@ -83,8 +83,17 @@ async function camWindow() {
 
 function panelWindow() {
 
+    $("#pen").removeClass("disabled");
+    $("#pen").attr("title", "");
+    if (app.config.recordingMode == 'camera') {
+        $("#pen").attr("title", "Pen not available in camera mode");
+        $("#pen").addClass("disabled");
+    }
+
     $("#pen").click(() => {
-        app.enterDrawMode();
+        if (app.config.recordingMode != 'camera') {
+            app.enterDrawMode();
+        }
     });
 
 }

@@ -2,6 +2,7 @@ const { ipcMain } = require('electron')
 
 module.exports = function () {
     ipcMain.handle('recording:start', function () {
-        //cnf.mainWindow.hide();
+        ipcMain.emit('panelWindow:open');
+        cnf.mainWindow.hide();
     });
 }
