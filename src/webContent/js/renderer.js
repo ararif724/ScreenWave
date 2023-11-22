@@ -81,7 +81,7 @@ async function camWindow() {
 
 }
 
-function panelWindow() {
+function recordingWindow() {
 
     $("#pen").removeClass("disabled");
     $("#pen").attr("title", "");

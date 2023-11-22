@@ -191,9 +191,9 @@ img {
 }
 
 /*
-* Panel Window
+* Recording Window
 **************************/
-.panel-window .controls {
+.recording-window .controls {
     position: absolute;
     top: 0;
     left: 50%;
@@ -207,29 +207,29 @@ img {
     border: 1px solid gray;
 }
 
-.panel-window .controls .control {
+.recording-window .controls .control {
     cursor: pointer;
     padding: 10px 7px;
     margin: 0 3px;
 }
 
-.panel-window .controls .control.disabled {
+.recording-window .controls .control.disabled {
     cursor: not-allowed;
     opacity: .1;
 }
 
-.panel-window .controls .control:not(.disabled):hover {
+.recording-window .controls .control:not(.disabled):hover {
     transform: scale(1.1);
 }
 
-.panel-window .controls .control#drag {
+.recording-window .controls .control#drag {
     width: 15px;
     padding: 10px 5px;
     cursor: move;
     -webkit-app-region: drag;
 }
 
-.panel-window .controls .control#drag i:first-child {
+.recording-window .controls .control#drag i:first-child {
     letter-spacing: -3px;
 }
 

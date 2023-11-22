@@ -4,7 +4,7 @@ module.exports = function () {
 
     ipcMain.handle('canvasWindow:enterDrawMode', function () {
 
-        cnf.panelWindow.hide();
+        cnf.recordingWindow.hide();
 
         if (typeof (cnf.canvasWindow) != 'undefined') {
             cnf.canvasWindow.show();
@@ -30,7 +30,7 @@ module.exports = function () {
 
     ipcMain.handle('canvasWindow:exitDrawMode', function () {
         cnf.canvasWindow.hide();
-        cnf.panelWindow.show();
+        cnf.recordingWindow.show();
     });
 
 }

@@ -2,8 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const mainWindowController = require('./controller/mainWindowController');
 const camWindowController = require('./controller/camWindowController');
-const recordingController = require('./controller/recordingController');
-const panelWindowController = require('./controller/panelWindowController');
+const recordingWindowController = require('./controller/recordingWindowController');
 const canvasWindowController = require('./controller/canvasWindowController');
 
 //setting variables
@@ -18,16 +17,15 @@ global.cnf = {
     recordingMode: 'screenCamera',
     videoInDeviceId: null,
     audioInDeviceId: null,
-    panelWindowPosition: { x: null, y: null },
+    recordingWindowPosition: { x: null, y: null },
     ...userCnf
 };
 
 //loading controllers
 mainWindowController();
 camWindowController();
-panelWindowController();
+recordingWindowController();
 canvasWindowController();
-recordingController();
 
 //root events
 ipcMain.handle('app:close', () => {
