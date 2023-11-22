@@ -83,6 +83,8 @@ async function camWindow() {
 
 function recordingWindow() {
 
+    startRecording();
+
     $("#pen").removeClass("disabled");
     $("#pen").attr("title", "");
     if (app.config.recordingMode == 'camera') {
@@ -95,6 +97,63 @@ function recordingWindow() {
             app.enterDrawMode();
         }
     });
+
+    async function startRecording() {
+        try {
+            const mainStream = await navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: {
+                    mandatory: {
+                        chromeMediaSource: 'desktop',
+                        chromeMediaSourceId: app.config.screenRecordSourceId
+                    }
+                }
+            });
+
+            //attach audio track to the screen stream
+            const audioStream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    deviceId: app.config.audioInDeviceId
+                }, video: false
+            });
+
+            mainStream.addTrack(audioStream.getAudioTracks()[0]);
+
+            const recorder = new MediaRecorder(mainStream);
+            let recordedBlobChunks = [];
+
+            recorder.ondataavailable = (e) => {
+                console.log('ondataavailable');
+                recordedBlobChunks.push(e.data);
+            };
+
+            recorder.onstop = async (e) => {
+                const recordedBlob = new Blob(recordedBlobChunks, { type: "video/webm; codecs=vp9" });
+                const arrBuffer = await recordedBlob.arrayBuffer();
+                app.saveRecord(arrBuffer);
+            };
+
+            recorder.start();
+
+            $("#stop").click(function () {
+                if (recorder.state === "recording" || recorder.state === "paused") {
+                    recorder.stop();
+                }
+            });
+
+            $("#pauseResume").click(function () {
+                if (recorder.state === "recording") {
+                    recorder.pause();
+                } else if (recorder.state === "paused") {
+                    recorder.resume();
+                }
+            });
+
+        } catch (e) {
+            console.log(e);
+        }
+
+    }
 
 }
 
