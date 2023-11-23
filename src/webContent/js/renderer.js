@@ -98,32 +98,70 @@ function recordingWindow() {
         }
     });
 
+    $("#delete").click(() => app.stopRecord());
+
+    let timeRecorded = 0; //in seconds
+    let timeRecordedIntervalId = null;
+
+    function startTimer() {
+        timeRecordedIntervalId = setInterval(() => {
+            timeRecorded++;
+            let minute = parseInt(timeRecorded / 60);
+            if (minute < 10) {
+                minute = "0" + minute;
+            }
+
+            let seconds = parseInt(timeRecorded % 60);
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+            let timeString = `${minute}:${seconds}`;
+            $("#timeRecorded").html(timeString);
+        }, 1000);
+    }
+    function stopTimer() {
+        clearInterval(timeRecordedIntervalId);
+    }
+
     async function startRecording() {
         try {
-            const mainStream = await navigator.mediaDevices.getUserMedia({
-                audio: false,
-                video: {
-                    mandatory: {
-                        chromeMediaSource: 'desktop',
-                        chromeMediaSourceId: app.config.screenRecordSourceId
+
+            let mainStream = null;
+
+            if (app.config.recordingMode != "camera") {
+                mainStream = await navigator.mediaDevices.getUserMedia({
+                    audio: false,
+                    video: {
+                        mandatory: {
+                            chromeMediaSource: 'desktop',
+                            chromeMediaSourceId: app.config.screenRecordSourceId
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                mainStream = await navigator.mediaDevices.getUserMedia({
+                    audio: false,
+                    video: {
+                        deviceId: app.config.videoInDeviceId
+                    }
+                });
+            }
 
-            //attach audio track to the screen stream
-            const audioStream = await navigator.mediaDevices.getUserMedia({
-                audio: {
-                    deviceId: app.config.audioInDeviceId
-                }, video: false
-            });
+            if (app.config.audioInDeviceId) {
+                //attach audio track to the screen stream
+                const audioStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        deviceId: app.config.audioInDeviceId
+                    }, video: false
+                });
 
-            mainStream.addTrack(audioStream.getAudioTracks()[0]);
+                mainStream.addTrack(audioStream.getAudioTracks()[0]);
+            }
 
-            const recorder = new MediaRecorder(mainStream);
+            const recorder = new MediaRecorder(mainStream, { mimeType: 'video/webm; codecs=vp9' });
             let recordedBlobChunks = [];
 
             recorder.ondataavailable = (e) => {
-                console.log('ondataavailable');
                 recordedBlobChunks.push(e.data);
             };
 
@@ -134,6 +172,7 @@ function recordingWindow() {
             };
 
             recorder.start();
+            startTimer();
 
             $("#stop").click(function () {
                 if (recorder.state === "recording" || recorder.state === "paused") {
@@ -144,13 +183,18 @@ function recordingWindow() {
             $("#pauseResume").click(function () {
                 if (recorder.state === "recording") {
                     recorder.pause();
+                    stopTimer();
+                    $("#pauseResume i").removeClass("fa-circle-pause").addClass("fa-circle-play");
                 } else if (recorder.state === "paused") {
                     recorder.resume();
+                    startTimer();
+                    $("#pauseResume i").removeClass("fa-circle-play").addClass("fa-circle-pause");
                 }
             });
 
         } catch (e) {
             console.log(e);
+            app.stopRecord();
         }
 
     }

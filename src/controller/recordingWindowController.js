@@ -1,9 +1,9 @@
-const { BrowserWindow, ipcMain, desktopCapturer, dialog } = require('electron');
+const { BrowserWindow, ipcMain, ipcRenderer, desktopCapturer, dialog, app } = require('electron');
 const { writeFile } = require('fs');
 
 module.exports = function () {
 
-    const recordingControlPanelSize = { width: 220, height: 60 };
+    const recordingControlPanelSize = { width: 300, height: 60 };
 
     ipcMain.handle('recording:start', async function () {
         const screenRecordSource = await desktopCapturer.getSources({ types: ['screen'] });
@@ -12,14 +12,22 @@ module.exports = function () {
         cnf.mainWindow.hide();
     });
 
-    ipcMain.handle('recording:stop', async function (e, arrBuffer) {
+    ipcMain.handle('recording:stop', function (e) {
+        cnf.mainWindow.show();
+        cnf.recordingWindow.close();
+    });
+
+    ipcMain.handle('recording:save', async function (e, arrBuffer) {
+
+        cnf.recordingWindow.close();
+
         const buffer = Buffer.from(arrBuffer);
         const { filePath } = await dialog.showSaveDialog({
             buttonLabel: 'Save video',
             defaultPath: `vid-${Date.now()}.webm`
         });
         if (filePath) {
-            writeFile(filePath, buffer, () => console.log('video saved successfully!'));
+            writeFile(filePath, buffer, () => app.quit());
         }
     });
 

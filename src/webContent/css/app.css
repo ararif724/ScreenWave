@@ -194,17 +194,13 @@ img {
 * Recording Window
 **************************/
 .recording-window .controls {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
     background: white;
-    padding-right: 5px;
     border-radius: 10px;
     display: flex;
     font-size: 25px;
     transition: all .2s;
     border: 1px solid gray;
+    justify-content: space-evenly;
 }
 
 .recording-window .controls .control {
@@ -213,12 +209,16 @@ img {
     margin: 0 3px;
 }
 
+.recording-window .controls .control#timeRecorded {
+    width: 52px;
+}
+
 .recording-window .controls .control.disabled {
     cursor: not-allowed;
     opacity: .1;
 }
 
-.recording-window .controls .control:not(.disabled):hover {
+.recording-window .controls .control:not(.disabled):not(.no-hover):hover {
     transform: scale(1.1);
 }
 
