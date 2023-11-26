@@ -8,17 +8,26 @@ function mainWindow() {
     $(".recording-mode-select").click(function () {
         $(".recording-mode-select").removeClass('active');
         $(this).addClass('active');
-        app.setRecordingMode($(this).data('recording-mode'));
+        app.getRecordingMode().then((recordingMode) => {
+            if (recordingMode !== $(this).data('recording-mode')) {
+                app.setRecordingMode($(this).data('recording-mode'));
+            }
+        });
     });
     loadMediaDevices();
 
     $("#cam-select select, #mic-select select").focus(loadMediaDevices);
-    $("#cam-select select, #mic-select select").change(function () {
+    $("#cam-select select").change(function () {
         app.setVideoInDeviceId($("#cam-select select").val());
-        app.setAudioInDeviceId($("#mic-select select").val());
     });
 
-    $(".start-record-btn").click(() => app.startRecording());
+    $(".start-record-btn").click(async () => {
+
+        await app.setAudioInDeviceId($("#mic-select select").val());
+        await app.setVideoInDeviceId($("#cam-select select").val());
+
+        app.startRecording();
+    });
 
     app.getRecordingMode().then((recordingMode) => {
         $(`.recording-mode-select[data-recording-mode=${recordingMode}]`).click();
@@ -60,19 +69,12 @@ async function camWindow() {
         $("#cam-video").removeClass("screen-camera-mode");
     }
 
-    let constraints = {
+    const constraints = {
         video: {
             deviceId: app.config.videoInDeviceId
         },
         audio: false
     };
-
-    if (app.config.audioInDeviceId) {
-        constraints.audio = {
-            deviceId:
-                app.config.audioInDeviceId
-        };
-    }
 
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     const camVideo = $("#cam-video")[0];

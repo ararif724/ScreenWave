@@ -44,7 +44,6 @@ ipcMain.handle('app:setVideoInDeviceId', (e, videoInDeviceId) => {
 
 ipcMain.handle('app:setAudioInDeviceId', (e, audioInDeviceId) => {
     cnf.audioInDeviceId = audioInDeviceId;
-    ipcMain.emit('camWindow:open');
 });
 
 ipcMain.handle('app:getRecordingMode', () => cnf.recordingMode);
