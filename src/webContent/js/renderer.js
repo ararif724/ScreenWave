@@ -1,230 +1,230 @@
 $(async function () {
-    window[$("body").data("window")]();
+	window[$("body").data("window")]();
 });
 
 function mainWindow() {
-    $(".close-app").click(() => app.close());
+	loadMediaDevices();
 
-    $(".recording-mode-select").click(function () {
-        $(".recording-mode-select").removeClass('active');
-        $(this).addClass('active');
-        app.getRecordingMode().then((recordingMode) => {
-            if (recordingMode !== $(this).data('recording-mode')) {
-                app.setRecordingMode($(this).data('recording-mode'));
-            }
-        });
-    });
-    loadMediaDevices();
+	$(".close-app").click(() => app.close());
 
-    $("#cam-select select, #mic-select select").focus(loadMediaDevices);
-    $("#cam-select select").change(function () {
-        app.setVideoInDeviceId($("#cam-select select").val());
-    });
+	$(".recording-mode-select").click(function () {
+		$(".recording-mode-select").removeClass("active");
+		$(this).addClass("active");
+	});
 
-    $(".start-record-btn").click(async () => {
+	$("#cam-select select, #mic-select select").focus(loadMediaDevices);
 
-        await app.setAudioInDeviceId($("#mic-select select").val());
-        await app.setVideoInDeviceId($("#cam-select select").val());
+	$(".start-record-btn").click(async () => {
+		const recordingMode = $(".recording-mode-select.active").data(
+			"recording-mode"
+		);
+		const videoInDeviceId = $("#cam-select select").val();
+		const audioInDeviceId = $("#mic-select select").val();
 
-        app.startRecording();
-    });
+		app.startRecording(recordingMode, videoInDeviceId, audioInDeviceId);
+	});
 
-    app.getRecordingMode().then((recordingMode) => {
-        $(`.recording-mode-select[data-recording-mode=${recordingMode}]`).click();
-    });
+	app.getRecordingMode().then((recordingMode) => {
+		$(`.recording-mode-select[data-recording-mode=${recordingMode}]`).click();
+	});
 
-    async function loadMediaDevices() {
+	async function loadMediaDevices() {
+		const videoInDeviceId = await app.getVideoInDeviceId();
+		const audioInDeviceId = await app.getAudioInDeviceId();
 
-        const videoInDeviceId = await app.getVideoInDeviceId();
-        const audioInDeviceId = await app.getAudioInDeviceId();
+		const mediaDevices = await navigator.mediaDevices.enumerateDevices();
 
-        const mediaDevices = await navigator.mediaDevices.enumerateDevices();
+		$("#cam-select select").html("");
+		$("#mic-select select").html("<option value=''>No Microphone</option>");
 
-        $("#cam-select select").html("");
-        $("#mic-select select").html("<option value=''>No Microphone</option>");
-
-        //load audio and video input media devices list on mainWindow
-        for (const mediaDevice of mediaDevices) {
-            if (mediaDevice.kind == 'videoinput') {
-                let selectedText = "";
-                if (mediaDevice.deviceId == videoInDeviceId) {
-                    selectedText = "selected";
-                }
-                $("#cam-select select").append(`<option value='${mediaDevice.deviceId}' ${selectedText}>${mediaDevice.label}</option>`);
-            } else if (mediaDevice.kind == 'audioinput') {
-                let selectedText = "";
-                if (mediaDevice.deviceId == audioInDeviceId) {
-                    selectedText = "selected";
-                }
-                $("#mic-select select").append(`<option value='${mediaDevice.deviceId}' ${selectedText}>${mediaDevice.label}</option>`);
-            }
-        }
-    }
+		//load audio and video input media devices list on mainWindow
+		for (const mediaDevice of mediaDevices) {
+			if (mediaDevice.kind == "videoinput") {
+				let selectedText = "";
+				if (mediaDevice.deviceId == videoInDeviceId) {
+					selectedText = "selected";
+				}
+				$("#cam-select select").append(
+					`<option value='${mediaDevice.deviceId}' ${selectedText}>${mediaDevice.label}</option>`
+				);
+			} else if (mediaDevice.kind == "audioinput") {
+				let selectedText = "";
+				if (mediaDevice.deviceId == audioInDeviceId) {
+					selectedText = "selected";
+				}
+				$("#mic-select select").append(
+					`<option value='${mediaDevice.deviceId}' ${selectedText}>${mediaDevice.label}</option>`
+				);
+			}
+		}
+	}
 }
 
 async function camWindow() {
-    if (app.config.recordingMode == "screenCamera") {
-        $("#cam-video").addClass("screen-camera-mode");
-    } else {
-        $("#cam-video").removeClass("screen-camera-mode");
-    }
+	if (app.config.recordingMode == "screenCamera") {
+		$("#cam-video").addClass("screen-camera-mode");
+	} else {
+		$("#cam-video").removeClass("screen-camera-mode");
+	}
 
-    const constraints = {
-        video: {
-            deviceId: app.config.videoInDeviceId
-        },
-        audio: false
-    };
+	const constraints = {
+		video: {
+			deviceId: app.config.videoInDeviceId,
+		},
+		audio: false,
+	};
 
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    const camVideo = $("#cam-video")[0];
-    camVideo.srcObject = stream;
-    camVideo.play();
-
+	const stream = await navigator.mediaDevices.getUserMedia(constraints);
+	const camVideo = $("#cam-video")[0];
+	camVideo.srcObject = stream;
+	camVideo.play();
 }
 
 function recordingWindow() {
+	startRecording();
 
-    startRecording();
+	$("#pen").removeClass("disabled");
+	$("#pen").attr("title", "");
+	if (app.config.recordingMode == "camera") {
+		$("#pen").attr("title", "Pen not available in camera mode");
+		$("#pen").addClass("disabled");
+	}
 
-    $("#pen").removeClass("disabled");
-    $("#pen").attr("title", "");
-    if (app.config.recordingMode == 'camera') {
-        $("#pen").attr("title", "Pen not available in camera mode");
-        $("#pen").addClass("disabled");
-    }
+	$("#pen").click(() => {
+		if (app.config.recordingMode != "camera") {
+			app.enterDrawMode();
+		}
+	});
 
-    $("#pen").click(() => {
-        if (app.config.recordingMode != 'camera') {
-            app.enterDrawMode();
-        }
-    });
+	$("#delete").click(() => app.stopRecord());
 
-    $("#delete").click(() => app.stopRecord());
+	let timeRecorded = 0; //in seconds
+	let timeRecordedIntervalId = null;
 
-    let timeRecorded = 0; //in seconds
-    let timeRecordedIntervalId = null;
+	function startTimer() {
+		timeRecordedIntervalId = setInterval(() => {
+			timeRecorded++;
+			let minute = parseInt(timeRecorded / 60);
+			if (minute < 10) {
+				minute = "0" + minute;
+			}
 
-    function startTimer() {
-        timeRecordedIntervalId = setInterval(() => {
-            timeRecorded++;
-            let minute = parseInt(timeRecorded / 60);
-            if (minute < 10) {
-                minute = "0" + minute;
-            }
+			let seconds = parseInt(timeRecorded % 60);
+			if (seconds < 10) {
+				seconds = "0" + seconds;
+			}
+			let timeString = `${minute}:${seconds}`;
+			$("#timeRecorded").html(timeString);
+		}, 1000);
+	}
+	function stopTimer() {
+		clearInterval(timeRecordedIntervalId);
+	}
 
-            let seconds = parseInt(timeRecorded % 60);
-            if (seconds < 10) {
-                seconds = "0" + seconds;
-            }
-            let timeString = `${minute}:${seconds}`;
-            $("#timeRecorded").html(timeString);
-        }, 1000);
-    }
-    function stopTimer() {
-        clearInterval(timeRecordedIntervalId);
-    }
+	async function startRecording() {
+		try {
+			let mainStream = null;
 
-    async function startRecording() {
-        try {
+			if (app.config.recordingMode != "camera") {
+				mainStream = await navigator.mediaDevices.getUserMedia({
+					audio: false,
+					video: {
+						mandatory: {
+							chromeMediaSource: "desktop",
+							chromeMediaSourceId: app.config.screenRecordSourceId,
+						},
+					},
+				});
+			} else {
+				mainStream = await navigator.mediaDevices.getUserMedia({
+					audio: false,
+					video: {
+						deviceId: app.config.videoInDeviceId,
+					},
+				});
+			}
 
-            let mainStream = null;
+			if (app.config.audioInDeviceId) {
+				//attach audio track to the screen stream
+				const audioStream = await navigator.mediaDevices.getUserMedia({
+					audio: {
+						deviceId: app.config.audioInDeviceId,
+					},
+					video: false,
+				});
 
-            if (app.config.recordingMode != "camera") {
-                mainStream = await navigator.mediaDevices.getUserMedia({
-                    audio: false,
-                    video: {
-                        mandatory: {
-                            chromeMediaSource: 'desktop',
-                            chromeMediaSourceId: app.config.screenRecordSourceId
-                        }
-                    }
-                });
-            } else {
-                mainStream = await navigator.mediaDevices.getUserMedia({
-                    audio: false,
-                    video: {
-                        deviceId: app.config.videoInDeviceId
-                    }
-                });
-            }
+				mainStream.addTrack(audioStream.getAudioTracks()[0]);
+			}
 
-            if (app.config.audioInDeviceId) {
-                //attach audio track to the screen stream
-                const audioStream = await navigator.mediaDevices.getUserMedia({
-                    audio: {
-                        deviceId: app.config.audioInDeviceId
-                    }, video: false
-                });
+			const recorder = new MediaRecorder(mainStream, {
+				mimeType: "video/webm; codecs=vp9",
+			});
+			let recordedBlobChunks = [];
 
-                mainStream.addTrack(audioStream.getAudioTracks()[0]);
-            }
+			recorder.ondataavailable = (e) => {
+				recordedBlobChunks.push(e.data);
+			};
 
-            const recorder = new MediaRecorder(mainStream, { mimeType: 'video/webm; codecs=vp9' });
-            let recordedBlobChunks = [];
+			recorder.onstop = async (e) => {
+				const recordedBlob = new Blob(recordedBlobChunks, {
+					type: "video/webm; codecs=vp9",
+				});
+				const arrBuffer = await recordedBlob.arrayBuffer();
+				app.saveRecord(arrBuffer);
+			};
 
-            recorder.ondataavailable = (e) => {
-                recordedBlobChunks.push(e.data);
-            };
+			recorder.start();
+			startTimer();
 
-            recorder.onstop = async (e) => {
-                const recordedBlob = new Blob(recordedBlobChunks, { type: "video/webm; codecs=vp9" });
-                const arrBuffer = await recordedBlob.arrayBuffer();
-                app.saveRecord(arrBuffer);
-            };
+			$("#stop").click(function () {
+				if (recorder.state === "recording" || recorder.state === "paused") {
+					recorder.stop();
+				}
+			});
 
-            recorder.start();
-            startTimer();
-
-            $("#stop").click(function () {
-                if (recorder.state === "recording" || recorder.state === "paused") {
-                    recorder.stop();
-                }
-            });
-
-            $("#pauseResume").click(function () {
-                if (recorder.state === "recording") {
-                    recorder.pause();
-                    stopTimer();
-                    $("#pauseResume i").removeClass("fa-circle-pause").addClass("fa-circle-play");
-                } else if (recorder.state === "paused") {
-                    recorder.resume();
-                    startTimer();
-                    $("#pauseResume i").removeClass("fa-circle-play").addClass("fa-circle-pause");
-                }
-            });
-
-        } catch (e) {
-            console.log(e);
-            app.stopRecord();
-        }
-
-    }
-
+			$("#pauseResume").click(function () {
+				if (recorder.state === "recording") {
+					recorder.pause();
+					stopTimer();
+					$("#pauseResume i")
+						.removeClass("fa-circle-pause")
+						.addClass("fa-circle-play");
+				} else if (recorder.state === "paused") {
+					recorder.resume();
+					startTimer();
+					$("#pauseResume i")
+						.removeClass("fa-circle-play")
+						.addClass("fa-circle-pause");
+				}
+			});
+		} catch (e) {
+			console.log(e);
+			app.stopRecord();
+		}
+	}
 }
 
 function canvasWindow() {
+	$(".canvas-window .how-to-exit-message").fadeOut(2000);
 
-    $(".canvas-window .how-to-exit-message").fadeOut(2000);
+	const paintCanvas = document.querySelector("#canvas-window-canvas");
+	paintCanvas.width = document.body.clientWidth;
+	paintCanvas.height = document.body.clientHeight;
 
-    const paintCanvas = document.querySelector('#canvas-window-canvas');
-    paintCanvas.width = document.body.clientWidth;
-    paintCanvas.height = document.body.clientHeight;
+	const context = paintCanvas.getContext("2d");
 
-    const context = paintCanvas.getContext('2d');
+	window.addEventListener("keyup", function (e) {
+		if (e.key == "Escape") {
+			context.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
+			app.exitDrawMode();
+		}
+	});
 
-    window.addEventListener('keyup', function (e) {
-        if (e.key == "Escape") {
-            context.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
-            app.exitDrawMode();
-        }
-    });
+	context.lineCap = "round";
+	context.strokeStyle = "red";
+	context.lineWidth = 5;
 
-    context.lineCap = 'round';
-    context.strokeStyle = "red";
-    context.lineWidth = 5;
-
-    /* const colorPicker = document.querySelector('.js-color-picker');
+	/* const colorPicker = document.querySelector('.js-color-picker');
  
     colorPicker.addEventListener('change', event => {
         context.strokeStyle = event.target.value;
@@ -239,31 +239,33 @@ function canvasWindow() {
         context.lineWidth = width;
     }); */
 
-    let x = 0, y = 0;
-    let isMouseDown = false;
+	let x = 0,
+		y = 0;
+	let isMouseDown = false;
 
-    const stopDrawing = () => { isMouseDown = false; }
-    const startDrawing = event => {
-        isMouseDown = true;
-        [x, y] = [event.offsetX, event.offsetY];
-    }
-    const drawLine = event => {
-        if (isMouseDown) {
-            const newX = event.offsetX;
-            const newY = event.offsetY;
-            context.beginPath();
-            context.moveTo(x, y);
-            context.lineTo(newX, newY);
-            context.stroke();
-            //[x, y] = [newX, newY];
-            x = newX;
-            y = newY;
-        }
-    }
+	const stopDrawing = () => {
+		isMouseDown = false;
+	};
+	const startDrawing = (event) => {
+		isMouseDown = true;
+		[x, y] = [event.offsetX, event.offsetY];
+	};
+	const drawLine = (event) => {
+		if (isMouseDown) {
+			const newX = event.offsetX;
+			const newY = event.offsetY;
+			context.beginPath();
+			context.moveTo(x, y);
+			context.lineTo(newX, newY);
+			context.stroke();
+			//[x, y] = [newX, newY];
+			x = newX;
+			y = newY;
+		}
+	};
 
-    paintCanvas.addEventListener('mousedown', startDrawing);
-    paintCanvas.addEventListener('mousemove', drawLine);
-    paintCanvas.addEventListener('mouseup', stopDrawing);
-    paintCanvas.addEventListener('mouseout', stopDrawing);
-
+	paintCanvas.addEventListener("mousedown", startDrawing);
+	paintCanvas.addEventListener("mousemove", drawLine);
+	paintCanvas.addEventListener("mouseup", stopDrawing);
+	paintCanvas.addEventListener("mouseout", stopDrawing);
 }

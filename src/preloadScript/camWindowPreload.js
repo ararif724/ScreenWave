@@ -1,5 +1,5 @@
-const { ipcRenderer, contextBridge } = require('electron')
+const { ipcRenderer, contextBridge } = require("electron");
 
-ipcRenderer.on('config', (event, config) => {
-    contextBridge.exposeInMainWorld('app', { config: config });
+ipcRenderer.on("config", (event, config) => {
+	contextBridge.exposeInMainWorld("app", { config: config });
 });

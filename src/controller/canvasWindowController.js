@@ -1,36 +1,33 @@
-const { BrowserWindow, ipcMain } = require('electron')
+const { BrowserWindow, ipcMain } = require("electron");
 
 module.exports = function () {
+	ipcMain.handle("canvasWindow:enterDrawMode", function () {
+		cnf.recordingWindow.hide();
 
-    ipcMain.handle('canvasWindow:enterDrawMode', function () {
+		if (typeof cnf.canvasWindow != "undefined") {
+			cnf.canvasWindow.show();
+			return true;
+		}
 
-        cnf.recordingWindow.hide();
+		const window = new BrowserWindow({
+			frame: false,
+			...cnf.displaySize,
+			transparent: true,
+			fullscreenable: false,
+			resizable: false,
+			alwaysOnTop: true,
+			webPreferences: {
+				preload: cnf.preloadScriptPath + "/canvasWindowPreload.js",
+			},
+		});
 
-        if (typeof (cnf.canvasWindow) != 'undefined') {
-            cnf.canvasWindow.show();
-            return true;
-        }
+		window.loadFile(cnf.webContentPath + "/html/canvasWindow.html");
 
-        const window = new BrowserWindow({
-            frame: false,
-            ...cnf.displaySize,
-            transparent: true,
-            fullscreenable: false,
-            resizable: false,
-            alwaysOnTop: true,
-            webPreferences: {
-                preload: cnf.preloadScriptPath + '/canvasWindowPreload.js'
-            }
-        });
+		cnf.canvasWindow = window;
+	});
 
-        window.loadFile(cnf.webContentPath + '/html/canvasWindow.html');
-
-        cnf.canvasWindow = window;
-    });
-
-    ipcMain.handle('canvasWindow:exitDrawMode', function () {
-        cnf.canvasWindow.hide();
-        cnf.recordingWindow.show();
-    });
-
-}
+	ipcMain.handle("canvasWindow:exitDrawMode", function () {
+		cnf.canvasWindow.hide();
+		cnf.recordingWindow.show();
+	});
+};
