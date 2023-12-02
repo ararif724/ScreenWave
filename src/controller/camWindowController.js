@@ -2,10 +2,6 @@ const { BrowserWindow, ipcMain } = require("electron");
 
 module.exports = function () {
 	ipcMain.on("camWindow:open", () => {
-		if (typeof cnf.camWindow != "undefined") {
-			cnf.camWindow.close();
-			delete cnf.camWindow;
-		}
 
 		if (cnf.recordingMode != "screen") {
 			let config = {
@@ -26,6 +22,7 @@ module.exports = function () {
 
 			const window = new BrowserWindow({
 				...config,
+				parent: cnf.recordingWindow,
 				frame: false,
 				transparent: true,
 				resizable: false,

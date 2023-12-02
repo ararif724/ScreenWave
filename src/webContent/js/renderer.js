@@ -78,6 +78,8 @@ async function camWindow() {
 	const camVideo = $("#cam-video")[0];
 	camVideo.srcObject = stream;
 	camVideo.play();
+
+	$("#cam-video").addClass("ready");
 }
 
 function recordingWindow() {
@@ -117,6 +119,7 @@ function recordingWindow() {
 			$("#timeRecorded").html(timeString);
 		}, 1000);
 	}
+
 	function stopTimer() {
 		clearInterval(timeRecordedIntervalId);
 	}

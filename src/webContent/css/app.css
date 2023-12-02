@@ -181,17 +181,23 @@ img {
 	overflow: hidden;
 	object-fit: cover;
 	-webkit-app-region: drag;
-	border: 5px solid deeppink;
 	box-sizing: border-box;
 }
 
 #cam-video.screen-camera-mode {
 	border-radius: 100%;
 	margin: 20px;
-	box-shadow: 0 0 15px 1px black;
 	border-width: 2px;
 	width: calc(100% - 40px);
 	height: calc(100vh - 40px);
+}
+
+#cam-video.ready {
+	border: 5px solid deeppink;
+}
+
+#cam-video.screen-camera-mode.ready {
+	box-shadow: 0 0 15px 1px black;
 }
 
 /*

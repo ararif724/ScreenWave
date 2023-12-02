@@ -25,16 +25,18 @@ module.exports = function () {
 			}
 
 			ipcMain.emit("recordingWindow:open");
-			cnf.mainWindow.hide();
+			cnf.mainWindow.close();
 		}
 	);
 
 	ipcMain.handle("recording:stop", function (e) {
-		cnf.mainWindow.show();
+		ipcMain.emit("mainWindow:open");
 		cnf.recordingWindow.close();
 	});
 
 	ipcMain.handle("recording:save", async function (e, arrBuffer) {
+		
+		ipcMain.emit("mainWindow:open");
 		cnf.recordingWindow.close();
 
 		const buffer = Buffer.from(arrBuffer);
@@ -43,7 +45,7 @@ module.exports = function () {
 			defaultPath: `vid-${Date.now()}.webm`,
 		});
 		if (filePath) {
-			writeFile(filePath, buffer, () => app.quit());
+			writeFile(filePath, buffer, () => {});
 		}
 	});
 
@@ -84,8 +86,7 @@ module.exports = function () {
 			cnf.recordingWindowPosition.y = bounds.y;
 		});
 
-		window.webContents.openDevTools();
-
 		cnf.recordingWindow = window;
+		ipcMain.emit('camWindow:open');
 	});
 };

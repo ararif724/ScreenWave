@@ -1,4 +1,4 @@
-const { BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 
 module.exports = function () {
 	ipcMain.handle("canvasWindow:enterDrawMode", function () {
@@ -16,12 +16,17 @@ module.exports = function () {
 			fullscreenable: false,
 			resizable: false,
 			alwaysOnTop: true,
+			minimizable: false,
 			webPreferences: {
 				preload: cnf.preloadScriptPath + "/canvasWindowPreload.js",
 			},
 		});
 
 		window.loadFile(cnf.webContentPath + "/html/canvasWindow.html");
+
+		window.on('close', function (){
+			app.quit();
+		});
 
 		cnf.canvasWindow = window;
 	});
