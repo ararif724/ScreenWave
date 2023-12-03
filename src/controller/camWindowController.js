@@ -22,7 +22,7 @@ module.exports = function () {
 
 			const window = new BrowserWindow({
 				...config,
-				parent: cnf.recordingWindow,
+				parent: recordingWindow,
 				frame: false,
 				transparent: true,
 				resizable: false,
@@ -39,7 +39,7 @@ module.exports = function () {
 				audioInDeviceId: cnf.audioInDeviceId,
 			});
 
-			cnf.camWindow = window;
+			global.camWindow = window;
 		}
 	});
 };

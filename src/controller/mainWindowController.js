@@ -16,6 +16,6 @@ module.exports = function () {
 
 		window.loadFile(cnf.webContentPath + "/html/mainWindow.html");
 
-		cnf.mainWindow = window;
+		global.mainWindow = window;
 	});
 };

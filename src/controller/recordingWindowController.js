@@ -24,18 +24,18 @@ module.exports = function () {
 			}
 
 			ipcMain.emit("recordingWindow:open");
-			cnf.mainWindow.close();
+			mainWindow.close();
 		}
 	);
 
 	ipcMain.handle("recording:stop", function (e) {
 		ipcMain.emit("mainWindow:open");
-		cnf.recordingWindow.close();
+		recordingWindow.close();
 	});
 
 	ipcMain.handle("recording:save", async function (e, arrBuffer) {
 		ipcMain.emit("mainWindow:open");
-		cnf.recordingWindow.close();
+		recordingWindow.close();
 
 		if (!existsSync(cnf.recordingSavingPath)) {
 			mkdirSync(cnf.recordingSavingPath);
@@ -94,7 +94,7 @@ module.exports = function () {
 			cnf.recordingWindowPosition.y = bounds.y;
 		});
 
-		cnf.recordingWindow = window;
+		global.recordingWindow = window;
 		ipcMain.emit("camWindow:open");
 	});
 };

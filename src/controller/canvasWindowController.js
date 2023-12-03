@@ -1,11 +1,12 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
+const { quitApp } = require("../helper");
 
 module.exports = function () {
 	ipcMain.handle("canvasWindow:enterDrawMode", function () {
-		cnf.recordingWindow.hide();
+		recordingWindow.hide();
 
-		if (typeof cnf.canvasWindow != "undefined") {
-			cnf.canvasWindow.show();
+		if (typeof canvasWindow != "undefined") {
+			canvasWindow.show();
 			return true;
 		}
 
@@ -24,15 +25,15 @@ module.exports = function () {
 
 		window.loadFile(cnf.webContentPath + "/html/canvasWindow.html");
 
-		window.on('close', function (){
-			app.quit();
+		window.on("close", function () {
+			quitApp();
 		});
 
-		cnf.canvasWindow = window;
+		global.canvasWindow = window;
 	});
 
 	ipcMain.handle("canvasWindow:exitDrawMode", function () {
-		cnf.canvasWindow.hide();
-		cnf.recordingWindow.show();
+		canvasWindow.hide();
+		recordingWindow.show();
 	});
 };
