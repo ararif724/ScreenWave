@@ -169,9 +169,13 @@ function recordingWindow() {
 			};
 
 			recorder.onstop = async (e) => {
-				const recordedBlob = new Blob(recordedBlobChunks, {
-					type: "video/webm; codecs=vp9",
-				});
+				const recordedBlob = await ysFixWebmDuration(
+					new Blob(recordedBlobChunks, {
+						type: "video/webm; codecs=vp9",
+					}),
+					(timeRecorded + 1) * 1000
+				);
+
 				const arrBuffer = await recordedBlob.arrayBuffer();
 				app.saveRecord(arrBuffer);
 			};
