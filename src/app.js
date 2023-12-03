@@ -19,6 +19,7 @@ global.cnf = {
 	videoInDeviceId: null,
 	audioInDeviceId: null,
 	recordingWindowPosition: { x: null, y: null },
+	camWindowPosition: { x: null, y: null }, //only used for rounded camera window of screenCamera mode
 	...userCnf,
 };
 

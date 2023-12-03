@@ -2,7 +2,6 @@ const { BrowserWindow, ipcMain } = require("electron");
 
 module.exports = function () {
 	ipcMain.on("camWindow:open", () => {
-
 		if (cnf.recordingMode != "screen") {
 			let config = {
 				width: 700,
@@ -11,11 +10,17 @@ module.exports = function () {
 
 			if (cnf.recordingMode == "screenCamera") {
 				const camWindowHeight = 300;
+
+				if (cnf.camWindowPosition.x == null) {
+					cnf.camWindowPosition.x = 0;
+					cnf.camWindowPosition.y = cnf.displaySize.height - camWindowHeight;
+				}
+
 				config = {
 					width: 300,
 					height: camWindowHeight,
-					x: 0,
-					y: cnf.displaySize.height - camWindowHeight,
+					x: cnf.camWindowPosition.x,
+					y: cnf.camWindowPosition.y,
 					alwaysOnTop: true,
 				};
 			}
@@ -38,6 +43,14 @@ module.exports = function () {
 				videoInDeviceId: cnf.videoInDeviceId,
 				audioInDeviceId: cnf.audioInDeviceId,
 			});
+
+			if (cnf.recordingMode == "screenCamera") {
+				window.on("move", function () {
+					const bounds = window.getBounds();
+					cnf.camWindowPosition.x = bounds.x;
+					cnf.camWindowPosition.y = bounds.y;
+				});
+			}
 
 			global.camWindow = window;
 		}
