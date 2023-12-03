@@ -14,6 +14,7 @@ global.cnf = {
 	controllerPath: path.join(__dirname, "/controller"),
 	preloadScriptPath: path.join(__dirname, "/preloadScript"),
 	webContentPath: path.join(__dirname, "/webContent"),
+	recordingSavingPath: app.getPath("home") + "/screen wave",
 	recordingMode: "screenCamera",
 	videoInDeviceId: null,
 	audioInDeviceId: null,

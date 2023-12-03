@@ -2,10 +2,9 @@ const {
 	BrowserWindow,
 	ipcMain,
 	desktopCapturer,
-	dialog,
-	app,
+	Notification,
 } = require("electron");
-const { writeFile } = require("fs");
+const { writeFile, mkdirSync, existsSync } = require("fs");
 
 module.exports = function () {
 	const recordingControlPanelSize = { width: 300, height: 60 };
@@ -35,18 +34,27 @@ module.exports = function () {
 	});
 
 	ipcMain.handle("recording:save", async function (e, arrBuffer) {
-		
 		ipcMain.emit("mainWindow:open");
 		cnf.recordingWindow.close();
 
-		const buffer = Buffer.from(arrBuffer);
-		const { filePath } = await dialog.showSaveDialog({
-			buttonLabel: "Save video",
-			defaultPath: `vid-${Date.now()}.webm`,
-		});
-		if (filePath) {
-			writeFile(filePath, buffer, () => {});
+		if (!existsSync(cnf.recordingSavingPath)) {
+			mkdirSync(cnf.recordingSavingPath);
 		}
+
+		writeFile(
+			`${cnf.recordingSavingPath}/sw-${Date.now()}.webm`,
+			Buffer.from(arrBuffer),
+			(err) => {
+				if (err) {
+					console.log(err);
+				} else {
+					new Notification({
+						title: "Screen Wave",
+						body: `Recording saved to ${cnf.recordingSavingPath}/sw-${Date.now()}.webm`,
+					}).show();
+				}
+			}
+		);
 	});
 
 	ipcMain.on("recordingWindow:open", function () {
@@ -87,6 +95,6 @@ module.exports = function () {
 		});
 
 		cnf.recordingWindow = window;
-		ipcMain.emit('camWindow:open');
+		ipcMain.emit("camWindow:open");
 	});
 };
