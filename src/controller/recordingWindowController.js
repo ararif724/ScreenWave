@@ -50,7 +50,9 @@ module.exports = function () {
 				} else {
 					new Notification({
 						title: "Screen Wave",
-						body: `Recording saved to ${cnf.recordingSavingPath}/sw-${Date.now()}.webm`,
+						body: `Recording saved to ${
+							cnf.recordingSavingPath
+						}/sw-${Date.now()}.webm`,
 					}).show();
 				}
 			}
