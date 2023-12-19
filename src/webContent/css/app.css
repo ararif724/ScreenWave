@@ -86,9 +86,13 @@ img {
 	font-size: 30px;
 	font-weight: bolder;
 	text-align: center;
-	margin: 30px 0 50px 0;
+	margin: 30px 0;
 	color: white;
 	-webkit-app-region: drag;
+}
+.app-branding img{
+	width: 350px;
+    filter: drop-shadow(2px 4px 6px black);
 }
 
 .recording-mode-selector-container {
@@ -233,7 +237,7 @@ img {
 }
 
 .recording-window .controls .control#drag {
-	width: 15px;
+	white-space: nowrap;
 	padding: 10px 5px;
 	cursor: move;
 	-webkit-app-region: drag;
