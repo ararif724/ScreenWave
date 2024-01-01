@@ -90,9 +90,9 @@ img {
 	color: white;
 	-webkit-app-region: drag;
 }
-.app-branding img{
+.app-branding img {
 	width: 350px;
-    filter: drop-shadow(2px 4px 6px black);
+	filter: drop-shadow(2px 4px 6px black);
 }
 
 .recording-mode-selector-container {
@@ -167,9 +167,22 @@ img {
 	padding: 20px;
 	font-size: 20px;
 	font-weight: bold;
-	border-radius: 20px;
+	border-radius: 32px;
 	cursor: pointer;
 	transition: all 0.2s;
+	position: relative;
+}
+
+.start-record-btn .record-icon {
+	border: 10px solid #ff0000cf;
+	border-radius: 50%;
+	width: 12px;
+	height: 12px;
+	display: block;
+	position: absolute;
+	left: 35px;
+	top: 50%;
+	transform: translateY(-50%);
 }
 
 .start-record-btn:hover {
@@ -197,7 +210,7 @@ img {
 }
 
 #cam-video.ready {
-	border: 5px solid deeppink;
+	border: 5px solid whitesmoke;
 }
 
 #cam-video.screen-camera-mode.ready {
