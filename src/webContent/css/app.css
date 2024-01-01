@@ -134,13 +134,14 @@ img {
 	background-color: rgb(166 169 176);
 	margin: 50px 15px;
 	border-radius: 10px;
+	color: darkgreen;
 }
 
 .select-box select {
 	width: 100%;
 	background: transparent;
 	border: none;
-	color: rgb(255 255 255 / 95%);
+	color: inherit;
 	font-size: 15px;
 	padding: 20px 0;
 	margin-right: 20px;
@@ -153,7 +154,7 @@ img {
 }
 
 .select-box .icon {
-	color: rgb(255 255 255 / 95%);
+	color: inherit;
 	font-size: 20px;
 	padding: 20px;
 }
