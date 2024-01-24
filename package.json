@@ -18,6 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "electron-cnf": "^1.0.1",
+    "electron-log": "^5.0.3",
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {

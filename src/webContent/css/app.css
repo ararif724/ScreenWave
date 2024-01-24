@@ -134,7 +134,7 @@ img {
 	background-color: rgb(166 169 176);
 	margin: 50px 15px;
 	border-radius: 10px;
-	color: darkgreen;
+	color: rgb(255 255 255 / 95%);
 }
 
 .select-box select {
