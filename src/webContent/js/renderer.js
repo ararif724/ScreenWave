@@ -162,17 +162,15 @@ function recordingWindow() {
 			const recorder = new MediaRecorder(mainStream, {
 				mimeType: "video/webm; codecs=vp9",
 			});
-			let recordedBlobChunks = [];
+			let recordedBlob = new Blob();
 
 			recorder.ondataavailable = (e) => {
-				recordedBlobChunks.push(e.data);
+				recordedBlob = new Blob([recordedBlob, e.data]);
 			};
 
 			recorder.onstop = async (e) => {
-				const recordedBlob = await ysFixWebmDuration(
-					new Blob(recordedBlobChunks, {
-						type: "video/webm; codecs=vp9",
-					}),
+				recordedBlob = await ysFixWebmDuration(
+					recordedBlob,
 					(timeRecorded + 1) * 1000
 				);
 
