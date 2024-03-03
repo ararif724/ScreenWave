@@ -30,33 +30,7 @@ module.exports = function () {
 
 	ipcMain.handle("recording:stop", function (e) {
 		ipcMain.emit("mainWindow:open");
-		recordingWindow.close();
-	});
-
-	ipcMain.handle("recording:save", async function (e, arrBuffer) {
-		ipcMain.emit("mainWindow:open");
-		recordingWindow.close();
-
-		if (!existsSync(cnf.recordingSavingPath)) {
-			mkdirSync(cnf.recordingSavingPath);
-		}
-
-		writeFile(
-			`${cnf.recordingSavingPath}/sw-${Date.now()}.webm`,
-			Buffer.from(arrBuffer),
-			(err) => {
-				if (err) {
-					console.log(err);
-				} else {
-					new Notification({
-						title: "Screen Wave",
-						body: `Recording saved to ${
-							cnf.recordingSavingPath
-						}/sw-${Date.now()}.webm`,
-					}).show();
-				}
-			}
-		);
+		recordingWindow.hide();
 	});
 
 	ipcMain.on("recordingWindow:open", function () {
@@ -82,6 +56,8 @@ module.exports = function () {
 		});
 
 		window.loadFile(cnf.webContentPath + "/html/recordingWindow.html");
+		
+		window.webContents.openDevTools();
 
 		window.webContents.send("config", {
 			recordingMode: cnf.recordingMode,

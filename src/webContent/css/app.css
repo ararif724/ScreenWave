@@ -237,8 +237,8 @@ img {
 	margin: 0 3px;
 }
 
-.recording-window .controls .control#timeRecorded {
-	width: 52px;
+.recording-window .controls .control#stop {
+	color: #ff0000cf;
 }
 
 .recording-window .controls .control.disabled {

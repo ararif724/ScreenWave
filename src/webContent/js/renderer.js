@@ -127,6 +127,31 @@ function recordingWindow() {
 	async function startRecording() {
 		try {
 			let mainStream = null;
+			let recordedBlob = new Blob();
+			const recorderRequestDataInterval = 5000; //in milliseconds
+			const googleDriveUploadChunkSize = 262144; //in byte
+
+			$("#stop").click(function () {
+				if (recorder.state === "recording" || recorder.state === "paused") {
+					recorder.stop();
+				}
+			});
+
+			$("#pauseResume").click(function () {
+				if (recorder.state === "recording") {
+					recorder.pause();
+					stopTimer();
+					$("#pauseResume i")
+						.removeClass("fa-circle-pause")
+						.addClass("fa-circle-play");
+				} else if (recorder.state === "paused") {
+					recorder.resume();
+					startTimer();
+					$("#pauseResume i")
+						.removeClass("fa-circle-play")
+						.addClass("fa-circle-pause");
+				}
+			});
 
 			if (app.config.recordingMode != "camera") {
 				mainStream = await navigator.mediaDevices.getUserMedia({
@@ -159,49 +184,88 @@ function recordingWindow() {
 				mainStream.addTrack(audioStream.getAudioTracks()[0]);
 			}
 
+			const createResumableUploadResponse = await axios.post(
+				"https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable",
+				{
+					name: `screenwave-${Date.now()}.webm`,
+					mimeType: "video/webm; codecs=vp9",
+				},
+				{
+					headers: {
+						Authorization:
+							"Bearer ya29.a0AfB_byAGSnLLXYGNnqS3te-pYzD9OpOk0zGJwOB40GMqjwWDyl52CeuYMhSBT0IO9UIdXW6N7nhhFUtrykgYS9DHgLQFVzPRz3HceXB3zqgbyaxxBMtj7yDUnGZgsbqD_jDkTDcnmcWvOVfX3ANz850BMO-jpDE5w_9naCgYKAZMSARASFQHGX2Mi0t8_Zccv9FnSr43dc5Qclg0171",
+						"Content-Type": "application/json",
+					},
+				}
+			);
+
+			async function uploadToGoogleDrive(fromByte = 0) {
+				let toByte = fromByte + googleDriveUploadChunkSize;
+				let totalByte = "*";
+
+				if (recorder.state == "inactive") {
+					totalByte = recordedBlob.size;
+					toByte = recordedBlob.size;
+				}
+
+				if (
+					recorder.state != "inactive" &&
+					recordedBlob.size < fromByte + googleDriveUploadChunkSize
+				) {
+					setTimeout(() => {
+						uploadToGoogleDrive(fromByte);
+					}, recorderRequestDataInterval);
+					return;
+				}
+
+				try {
+					const blobChunkToUpload = recordedBlob.slice(fromByte, toByte);
+
+					console.log({
+						fromByte,
+						toByte,
+						blobChunkToUploadSize: blobChunkToUpload.size,
+						contentRange: `bytes ${fromByte}-${toByte - 1}/${totalByte}`,
+					});
+
+					const resp = await axios.put(
+						createResumableUploadResponse.headers.location,
+						blobChunkToUpload,
+						{
+							headers: {
+								"Content-Range": `bytes ${fromByte}-${toByte - 1}/${totalByte}`,
+							},
+						}
+					);
+
+					console.log("resp1", resp);
+				} catch (resp) {
+					console.log("resp2", resp);
+					uploadToGoogleDrive(
+						parseInt(resp.response.headers.range.split("-")[1]) + 1
+					);
+				}
+			}
+
 			const recorder = new MediaRecorder(mainStream, {
 				mimeType: "video/webm; codecs=vp9",
 			});
-			let recordedBlob = new Blob();
+
+			const recorderRequestDataIntervalId = setInterval(() => {
+				recorder.requestData();
+			}, recorderRequestDataInterval);
 
 			recorder.ondataavailable = (e) => {
 				recordedBlob = new Blob([recordedBlob, e.data]);
 			};
 
 			recorder.onstop = async (e) => {
-				recordedBlob = await ysFixWebmDuration(
-					recordedBlob,
-					(timeRecorded + 1) * 1000
-				);
-
-				const arrBuffer = await recordedBlob.arrayBuffer();
-				app.saveRecord(arrBuffer);
+				clearInterval(recorderRequestDataIntervalId);
 			};
 
 			recorder.start();
 			startTimer();
-
-			$("#stop").click(function () {
-				if (recorder.state === "recording" || recorder.state === "paused") {
-					recorder.stop();
-				}
-			});
-
-			$("#pauseResume").click(function () {
-				if (recorder.state === "recording") {
-					recorder.pause();
-					stopTimer();
-					$("#pauseResume i")
-						.removeClass("fa-circle-pause")
-						.addClass("fa-circle-play");
-				} else if (recorder.state === "paused") {
-					recorder.resume();
-					startTimer();
-					$("#pauseResume i")
-						.removeClass("fa-circle-play")
-						.addClass("fa-circle-pause");
-				}
-			});
+			uploadToGoogleDrive();
 		} catch (e) {
 			console.log(e);
 			app.stopRecord();
