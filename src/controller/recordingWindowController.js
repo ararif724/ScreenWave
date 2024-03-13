@@ -1,10 +1,4 @@
-const {
-	BrowserWindow,
-	ipcMain,
-	desktopCapturer,
-	Notification,
-} = require("electron");
-const { writeFile, mkdirSync, existsSync } = require("fs");
+const { BrowserWindow, ipcMain, desktopCapturer } = require("electron");
 
 module.exports = function () {
 	const recordingControlPanelSize = { width: 300, height: 60 };
@@ -56,7 +50,7 @@ module.exports = function () {
 		});
 
 		window.loadFile(cnf.webContentPath + "/html/recordingWindow.html");
-		
+
 		window.webContents.openDevTools();
 
 		window.webContents.send("config", {
@@ -64,6 +58,8 @@ module.exports = function () {
 			screenRecordSourceId: cnf.screenRecordSourceId,
 			videoInDeviceId: cnf.videoInDeviceId,
 			audioInDeviceId: cnf.audioInDeviceId,
+			googleApiRefreshToken: cnf.googleApiRefreshToken,
+			screenwaveWebIdentityToken: cnf.screenwaveWebIdentityToken,
 		});
 
 		window.on("move", function () {

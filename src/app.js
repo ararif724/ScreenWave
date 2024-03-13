@@ -1,7 +1,7 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, shell } = require("electron");
 const path = require("path");
 const { getAllCnf } = require("electron-cnf");
-const { quitApp } = require("./helper");
+const { quitApp, connectToGoogleDrive } = require("./helper");
 const mainWindowController = require("./controller/mainWindowController");
 const camWindowController = require("./controller/camWindowController");
 const recordingWindowController = require("./controller/recordingWindowController");
@@ -23,11 +23,17 @@ global.cnf = {
 	...userCnf,
 };
 
+global.screenwaveWebUrl = "http://127.0.0.1:8000";
+
 //loading controllers
 mainWindowController();
 camWindowController();
 recordingWindowController();
 canvasWindowController();
+
+if (!app.requestSingleInstanceLock()) {
+	app.exit(0);
+}
 
 //root events
 ipcMain.handle("app:close", () => {
@@ -43,6 +49,10 @@ app.whenReady().then(() => {
 	cnf.displaySize = screen.getPrimaryDisplay().bounds;
 
 	ipcMain.emit("mainWindow:open");
+
+	if (typeof cnf.googleApiRefreshToken == "undefined") {
+		connectToGoogleDrive();
+	}
 });
 
 app.on("window-all-closed", () => {
